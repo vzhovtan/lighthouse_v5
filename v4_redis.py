@@ -5,9 +5,7 @@ import redis3
 #Connections definition
 r = redis3.Redis(host='127.0.0.1', port=6379)
 
-clientv4 = MongoClient(
-    'mongodb://lighthouse_v41_backend:a958935c0a9a9d21709711cacf2374dfea743d5e@bdb-user-alln-2.cisco.com:27000/?authSource'
-    '=task_lighthouse_v41_backend&authMechanism=MONGODB-CR')
+clientv4 = MongoClient()
 mydb4 = clientv4["task_lighthouse_v41_backend"]
 
 #Getting all document from MongoDB collection and creating redis DB
