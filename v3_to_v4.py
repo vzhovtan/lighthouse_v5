@@ -1,13 +1,9 @@
 from pymongo import MongoClient
 
-clientv3 = MongoClient(
-    'mongodb://lighthouse_v3_backend:cb0c237101941d9fc1c8229206af244047e42a17@bdb-dbaas-alln-1:27000/?authSource'
-    '=task_lighthouse_v3_backend&authMechanism=MONGODB-CR')
+clientv3 = MongoClient()
 mydb3 = clientv3["task_lighthouse_v3_backend"]
 
-clientv4 = MongoClient(
-    'mongodb://lighthouse_v41_backend:a958935c0a9a9d21709711cacf2374dfea743d5e@bdb-user-alln-2.cisco.com:27000/?authSource'
-    '=task_lighthouse_v41_backend&authMechanism=MONGODB-CR')
+clientv4 = MongoClient()
 mydb4 = clientv4["task_lighthouse_v41_backend"]
 collection4 = mydb4["mobility"]
 
