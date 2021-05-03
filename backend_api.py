@@ -4,15 +4,19 @@ from bottle import *
 """
 Redis has to be started on the same localhost with command
 docker run -p 6379:6379 --name redis-redisjson redislabs/rejson:latest
-v4_redis.py file takes the data from production mongoDB and update Redis
+db_to_redis.py file takes the data from local JSON file which contains the entire Lighthouse DB and update Redis
 """
+
+
 r = redis3.Redis(host='127.0.0.1', port=6379)
+
 
 @get('/')    # http://localhost:<port>
 def welcome():
     response.set_header('Vary', 'Accept')
     response.content_type = 'application/json'
     return 'REST API for Lighthouse v5'
+
 
 @get('/collections')    # http://localhost:<port>/collections
 def get_platform_list():
@@ -24,6 +28,7 @@ def get_platform_list():
     collections = list(set(collection_list))
     collections.sort()
     return json.dumps(collections)
+
 
 @get('/platforms')    # http://localhost:<port>/platforms
 def get_platform_list():
@@ -39,6 +44,7 @@ def get_platform_list():
     platforms = list(set(platform_list))
     platforms.sort()
     return json.dumps(platforms)
+
 
 @get('/components')    # http://localhost:<port>/components
 def get_component_list():
@@ -57,6 +63,7 @@ def get_component_list():
     components.sort()
     return json.dumps(components)
 
+
 @get('/releases')    # http://localhost:<port>/releases
 def get_release_list():
     response.content_type = 'application/json'
@@ -69,13 +76,14 @@ def get_release_list():
         collection = key.decode("utf-8").split("@")[0]
         platform = key.decode("utf-8").split("@")[1]
         component = key.decode("utf-8").split("@")[2]
-        release =  key.decode("utf-8").split("@")[3]
+        release = key.decode("utf-8").split("@")[3]
         if platform == selected_platform and component == selected_component and collection == selected_collection:
             release_list.append(release)
 
     releases = list(set(release_list))
     releases.sort()
     return json.dumps(releases)
+
 
 @get('/entry')    # http://localhost:<port>/entry
 def get_entry():
@@ -88,6 +96,7 @@ def get_entry():
     selected_key = collection + "@" + platform + "@" + component + "@" + release
     selected_value = r.get(selected_key)
     return json.loads(selected_value)
+
 
 if __name__ == '__main__':
     run(host='localhost', port=9600)
