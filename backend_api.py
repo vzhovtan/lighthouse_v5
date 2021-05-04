@@ -8,21 +8,21 @@ db_to_redis.py file takes the data from local JSON file which contains the entir
 """
 
 
-r = redis3.Redis(host='127.0.0.1', port=6379)
+redis_connection = redis3.Redis(host="127.0.0.1", port=6379)
 
 
-@get('/')    # http://localhost:<port>
+@get("/")    # http://localhost:<port>
 def welcome():
-    response.set_header('Vary', 'Accept')
-    response.content_type = 'application/json'
-    return 'REST API for Lighthouse v5'
+    response.set_header("Vary", "Accept")
+    response.content_type = "application/json"
+    return "Base REST API end-point for Lighthouse v5"
 
 
-@get('/collections')    # http://localhost:<port>/collections
+@get("/collections")    # http://localhost:<port>/collections
 def get_platform_list():
-    response.content_type = 'application/json'
+    response.content_type = "application/json"
     collection_list = []
-    for key in r.keys():
+    for key in redis_connection.keys():
         collection = key.decode("utf-8").split("@")[0]
         collection_list.append(collection)
     collections = list(set(collection_list))
@@ -30,13 +30,13 @@ def get_platform_list():
     return json.dumps(collections)
 
 
-@get('/platforms')    # http://localhost:<port>/platforms
+@get("/platforms")    # http://localhost:<port>/platforms
 def get_platform_list():
-    response.content_type = 'application/json'
+    response.content_type = "application/json"
     input_data = json.load(request.body)
-    selected_collection = input_data['collection']
+    selected_collection = input_data["collection"]
     platform_list = []
-    for key in r.keys():
+    for key in redis_connection.keys():
         collection = key.decode("utf-8").split("@")[0]
         platform = key.decode("utf-8").split("@")[1]
         if collection == selected_collection:
@@ -46,14 +46,14 @@ def get_platform_list():
     return json.dumps(platforms)
 
 
-@get('/components')    # http://localhost:<port>/components
+@get("/components")    # http://localhost:<port>/components
 def get_component_list():
-    response.content_type = 'application/json'
+    response.content_type = "application/json"
     input_data = json.load(request.body)
-    selected_collection = input_data['collection']
-    selected_platform = input_data['platform']
+    selected_collection = input_data["collection"]
+    selected_platform = input_data["platform"]
     component_list = []
-    for key in r.keys():
+    for key in redis_connection.keys():
         collection = key.decode("utf-8").split("@")[0]
         platform = key.decode("utf-8").split("@")[1]
         component = key.decode("utf-8").split("@")[2]
@@ -64,15 +64,15 @@ def get_component_list():
     return json.dumps(components)
 
 
-@get('/releases')    # http://localhost:<port>/releases
+@get("/releases")    # http://localhost:<port>/releases
 def get_release_list():
-    response.content_type = 'application/json'
+    response.content_type = "application/json"
     input_data = json.load(request.body)
-    selected_collection = input_data['collection']
-    selected_platform = input_data['platform']
-    selected_component = input_data['component']
+    selected_collection = input_data["collection"]
+    selected_platform = input_data["platform"]
+    selected_component = input_data["component"]
     release_list = []
-    for key in r.keys():
+    for key in redis_connection.keys():
         collection = key.decode("utf-8").split("@")[0]
         platform = key.decode("utf-8").split("@")[1]
         component = key.decode("utf-8").split("@")[2]
@@ -85,16 +85,16 @@ def get_release_list():
     return json.dumps(releases)
 
 
-@get('/entry')    # http://localhost:<port>/entry
+@get("/entry")    # http://localhost:<port>/entry
 def get_entry():
-    response.content_type = 'application/json'
+    response.content_type = "application/json"
     input_data = json.load(request.body)
-    collection = input_data['collection']
-    platform = input_data['platform']
-    component = input_data['component']
-    release = input_data['release']
+    collection = input_data["collection"]
+    platform = input_data["platform"]
+    component = input_data["component"]
+    release = input_data["release"]
     selected_key = collection + "@" + platform + "@" + component + "@" + release
-    selected_value = r.get(selected_key)
+    selected_value = redis_connection.get(selected_key)
     return json.loads(selected_value)
 
 
